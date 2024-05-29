@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Door Project</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Smart Door Project</h1>
+        <nav>
+            <ul>
+                <li><a href="#introduction">Introduction</a></li>
+                <li><a href="#project-overview">Project Overview</a></li>
+                <li><a href="#components">Components</a></li>
+                <li><a href="#guide">Guide</a></li>
+                <li><a href="#code">Arduino Code</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section id="introduction" class="introduction">
+            <h2>Introduction</h2>
+            <p>Welcome to the Smart Door Project. This project utilizes an Arduino Uno to create a smart door system that can be controlled remotely, monitor the door status, and enhance security.</p>
+        </section>
+        <section id="project-overview" class="project-overview">
+            <h2>Project Overview</h2>
+            <img src="smart-door-project.jpg.png" alt="Smart Door Project Image" class="project-img">
+        </section>
+        <section id="components" class="components">
+            <h2>Components Needed</h2>
+            <ul>
+                <li>Arduino Uno</li>
+                <li>Servo Motor or Electronic Lock</li>
+                <li>Magnetic Door Sensor or Reed Switch</li>
+                <li>PIR Motion Sensor (optional)</li>
+                <li>Wi-Fi Module (ESP8266 or similar)</li>
+                <li>Push Button (for manual override)</li>
+                <li>LEDs (for status indication)</li>
+                <li>Breadboard and Jumper Wires</li>
+                <li>Power Supply</li>
+                <li>Resistors (if needed for sensors and LEDs)</li>
+            </ul>
+        </section>
+        <section id="guide" class="guide">
+            <h2>Step-by-Step Guide</h2>
+            <div class="step">
+                <button class="collapsible">1. Setting Up the Servo Motor or Electronic Lock</button>
+                <div class="content">
+                    <p>Connect the servo motor to the Arduino. The servo has three wires: power (usually red), ground (black or brown), and signal (yellow or white). Connect the power wire to the 5V pin on the Arduino. Connect the ground wire to a GND pin on the Arduino. Connect the signal wire to a digital PWM pin (e.g., pin 9).</p>
+                </div>
+            </div>
+            <div class="step">
+                <button class="collapsible">2. Connecting the Magnetic Door Sensor</button>
+                <div class="content">
+                    <p>Connect one end of the sensor to a digital pin (e.g., pin 2). Connect the other end to GND. If using a normally open sensor, you may need to add a pull-up resistor (10kΩ) between the digital pin and 5V.</p>
+                </div>
+            </div>
+            <div class="step">
+                <button class="collapsible">3. Adding the Motion Sensor (Optional)</button>
+                <div class="content">
+                    <p>Connect the VCC and GND pins of the PIR sensor to 5V and GND on the Arduino. Connect the output pin of the PIR sensor to a digital pin (e.g., pin 3).</p>
+                </div>
+            </div>
+            <div class="step">
+                <button class="collapsible">4. Wi-Fi Module (ESP8266)</button>
+                <div class="content">
+                    <p>Connect the ESP8266 to the Arduino. Make sure to use a level shifter if your module requires 3.3V logic levels. Connect VCC to 3.3V (or use an appropriate power supply for the ESP8266). Connect GND to GND. Connect TX of the ESP8266 to RX of the Arduino (pin 0). Connect RX of the ESP8266 to TX of the Arduino (pin 1).</p>
+                </div>
+            </div>
+            <div class="step">
+                <button class="collapsible">5. Push Button</button>
+                <div class="content">
+                    <p>Connect one leg of the push button to a digital pin (e.g., pin 4). Connect the other leg to GND. Use a pull-up resistor (10kΩ) between the digital pin and 5V if needed.</p>
+                </div>
+            </div>
+            <div class="step">
+                <button class="collapsible">6. LEDs for Status Indication</button>
+                <div class="content">
+                    <p>Connect the anode of each LED to a digital pin through a current-limiting resistor (e.g., 220Ω). Connect the cathode to GND.</p>
+                </div>
+            </div>
+        </section>
+        <section id="code" class="code">
+            <h2>Arduino Code</h2>
+            <pre><code>
+#include &lt;Servo.h&gt;
+Servo myservo;
+int doorSensorPin = 2;
+int motionSensorPin = 3;
+int buttonPin = 4;
+int ledPin = 5;
+int lockPosition = 0;
+
+void setup() {
+    pinMode(doorSensorPin, INPUT);
+    pinMode(motionSensorPin, INPUT);
+    pinMode(buttonPin, INPUT_PULLUP);
+    pinMode(ledPin, OUTPUT);
+    myservo.attach(9);
+    myservo.write(lockPosition); // Initially locked
+    Serial.begin(9600);
+}
+
+void loop() {
+    int doorStatus = digitalRead(doorSensorPin);
+    int motionStatus = digitalRead(motionSensorPin);
+    int buttonStatus = digitalRead(buttonPin);
+
+    if (doorStatus == HIGH) {
+        digitalWrite(ledPin, HIGH); // Door is open
+    } else {
+        digitalWrite(ledPin, LOW); // Door is closed
+    }
+
+    if (buttonStatus == LOW) {
+        lockPosition = (lockPosition == 0) ? 90 : 0; // Toggle lock position
+        myservo.write(lockPosition);
+        delay(1000); // Debounce delay
+    }
+
+    if (motionStatus == HIGH) {
+        // Add your motion detection code here
+    }
+
+    // Add Wi-Fi communication code here to handle remote locking/unlocking
+    delay(100); // Short delay to stabilize sensor readings
+}
+            </code></pre>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 Smart Door Project. All rights reserved.</p>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>
